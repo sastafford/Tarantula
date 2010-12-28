@@ -8,25 +8,17 @@ import com.marklogic.xcc.ResultSequence;
 public class HTTPCrawlerTest extends XQueryTestCase {
 
 	private String modulePath = "/util/tarantula.xqy";
-	private String moduleNamespace = "http://www.marklogic.com/tarantula";
 	
 	private String sampleURL = "http://en.wikipedia.org/wiki/Star_wars";
 
 	public void testHTTPGet() throws Exception {
 		//Initialize the variable
-		XdmValue[] params = new XdmValue[] { ValueFactory.newXSString(sampleURL)};
-		ResultSequence rs = executeLibraryModule(modulePath, moduleNamespace, "get-page", params);
+		XdmVariable[] variables = new XdmVariable[] { 
+				ValueFactory.newVariable(new XName("url"), ValueFactory.newXSString(sampleURL))};
+		ResultSequence rs = this.executeMainModule(modulePath, null, variables);
 		XSBoolean ok  = (XSBoolean)rs.itemAt(0);
 		assertTrue(ok.asBoolean());					
 	}
 	
-	public void testexternalVariableTest() throws Exception {
-		//Initialize the variable
-		XdmValue[] params = new XdmValue[] { ValueFactory.newXSString(sampleURL)};
-		ResultSequence rs = executeLibraryModule("/application/models/http-crawler.xqy", "http://www.marklogic.com/tarantula/crawler", "tester", null);
-		assertTrue(true);					
-	}
-	
-	
-	
+		
 }

@@ -2,31 +2,25 @@ xquery version "1.0-ml";
 
 module namespace crawl = "http://www.marklogic.com/tarantula/crawler";
 
-import module namespace tara = "http://www.marklogic.com/tarantula" at "/util/tarantula.xqy";
- 
 declare function init()
 as empty-sequence()
 {
     xdmp:document-insert("/config/tarantula.xml",
-    <tarantula>
+    <tarantula xmlns="http://www.marklogic.com/tarantula">
         <switch>on</switch>
     </tarantula>)
 
 };
 
 declare function turnOn()
-as xs:boolean
 {
-    let $config := xdmp:node-replace(fn:doc("/config/tarantula.xml")/switch, 
-                   <switch>on</switch>)
-    return fn:true()
+    xdmp:node-replace(fn:doc("/config/tarantula.xml")//tara:switch, 
+                   <switch xmlns="http://www.marklogic.com/tarantula">on</switch>)
 };
  
 
- declare function turnOff()
- as xs:boolean
- {
-    let $config := xdmp:node-replace(fn:doc("/config/tarantula.xml")/switch, 
-                   <switch>off</switch>)
-    return fn:true()
- };
+declare function turnOff()
+{
+    xdmp:node-replace(fn:doc("/config/tarantula.xml")//tara:switch, 
+                   <switch xmlns="http://www.marklogic.com/tarantula">off</switch>)
+};
