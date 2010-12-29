@@ -6,7 +6,8 @@ declare variable $data as map:map external;
   <div id="searchdiv">
     SEED URL: 
     <input type="text" name="url" id="url" value="{xdmp:get-request-field("url")}" size="55"/>
-    <input type="submit" id="submitbtn" name="submitbtn" value="CRAWL"/>
+    <input type="submit" id="crawl" name="crawl" value="CRAWL"/>
+    <input type="submit" id="stop" name="stop" value="STOP"/>
   </div>
   <br />
   <br />

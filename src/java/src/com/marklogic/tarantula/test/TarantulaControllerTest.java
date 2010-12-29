@@ -2,6 +2,7 @@ package com.marklogic.tarantula.test;
 
 import com.marklogic.ps.test.XQueryTestCase;
 import com.marklogic.xcc.ResultSequence;
+import com.marklogic.xcc.types.XSInteger;
 
 public class TarantulaControllerTest extends XQueryTestCase {
 
@@ -35,6 +36,16 @@ public class TarantulaControllerTest extends XQueryTestCase {
 		ResultSequence rs = this.executeQuery(q, null, null);
 		String qStr = rs.asString();
 		assertEquals("on", qStr);
+	
+	}
+	
+	public void testEmptyQueue() throws Exception {
+		executeLibraryModule(modulePath, moduleNamespace, "emptyQueue");
+		// Verify update by running a query
+		String q = "fn:count(fn:doc('/config/queue.xml')//link)";
+		ResultSequence rs = this.executeQuery(q, null, null);
+		XSInteger qResult = (XSInteger)rs.itemAt(0);
+		assertEquals(getName(), 0, qResult.asPrimitiveInt());
 	
 	}
 	

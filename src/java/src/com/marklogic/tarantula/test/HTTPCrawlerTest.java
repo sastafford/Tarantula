@@ -10,7 +10,18 @@ public class HTTPCrawlerTest extends XQueryTestCase {
 	private String modulePath = "/util/tarantula.xqy";
 	
 	private String sampleURL = "http://en.wikipedia.org/wiki/Star_wars";
-
+	//private String sampleURL = "http://upload.wikimedia.org/wikipedia/commons/6/6c/Star_Wars_Logo.svg";
+	
+	protected void setUp() throws Exception {
+		super.setUp();
+		executeLibraryModule("/application/models/http-crawler.xqy", 
+				"http://www.marklogic.com/tarantula/crawler", 
+				"init", null);
+		executeLibraryModule("/application/models/http-crawler.xqy", 
+							"http://www.marklogic.com/tarantula/crawler", 
+							"emptyQueue", null);
+	}
+	
 	public void testHTTPGet() throws Exception {
 		//Initialize the variable
 		XdmVariable[] variables = new XdmVariable[] { 

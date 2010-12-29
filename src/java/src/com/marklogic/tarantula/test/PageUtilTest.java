@@ -92,4 +92,15 @@ public class PageUtilTest extends XQueryTestCase {
 		String s = (String)rs.itemAt(0).asString();
 		assertEquals(s, "http://www.google.com");					
 	}
+	
+	public void testRelToAbs10() throws Exception {
+		XdmValue[] params = new XdmValue[] { 
+				ValueFactory.newXSString("http://en.wikipedia.org/wiki/Star_Wars"),
+				ValueFactory.newXSString("/wiki/File:Star_Wars_Logo.svg")};
+		ResultSequence rs = executeLibraryModule(modulePath, moduleNamespace, "rel-to-abs", params);
+		String s = (String)rs.itemAt(0).asString();
+		assertEquals("http://en.wikipedia.org/wiki/File:Star_Wars_Logo.svg", s);					
+	}
+	
+	
 }
