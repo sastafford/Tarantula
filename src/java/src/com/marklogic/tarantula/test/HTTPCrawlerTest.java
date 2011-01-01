@@ -9,8 +9,8 @@ public class HTTPCrawlerTest extends XQueryTestCase {
 
 	private String modulePath = "/util/tarantula.xqy";
 	
-	private String sampleURL = "http://en.wikipedia.org/wiki/Star_wars";
-	//private String sampleURL = "http://upload.wikimedia.org/wikipedia/commons/6/6c/Star_Wars_Logo.svg";
+	private String sampleURL1 = "http://en.wikipedia.org/wiki/Star_wars";
+	private String sampleURL2 = "http://upload.wikimedia.org/wikipedia/commons/6/6c/Star_Wars_Logo.svg";
 	
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -22,13 +22,17 @@ public class HTTPCrawlerTest extends XQueryTestCase {
 							"emptyQueue", null);
 	}
 	
-	public void testHTTPGet() throws Exception {
+	public void testHTTPGetHTMLContent() throws Exception {
 		//Initialize the variable
 		XdmVariable[] variables = new XdmVariable[] { 
-				ValueFactory.newVariable(new XName("url"), ValueFactory.newXSString(sampleURL))};
+				ValueFactory.newVariable(new XName("url"), ValueFactory.newXSString(sampleURL1))};
 		ResultSequence rs = this.executeMainModule(modulePath, null, variables);
-		XSBoolean ok  = (XSBoolean)rs.itemAt(0);
-		assertTrue(ok.asBoolean());					
+		String q = "fn:doc('" + sampleURL1 + "')//*:title/text()";
+		ResultSequence rs2 = executeQuery(q, null, null);
+		String qStr = rs2.asString();
+		System.out.println(rs.asString());
+		System.out.println(qStr);
+		assertEquals("Star Wars - Wikipedia, the free encyclopedia", qStr);		
 	}
 	
 		

@@ -2,12 +2,25 @@ package com.marklogic.tarantula.test;
 
 import com.marklogic.ps.test.XQueryTestCase;
 import com.marklogic.xcc.ResultSequence;
+import com.marklogic.xcc.ValueFactory;
 import com.marklogic.xcc.types.XSInteger;
+import com.marklogic.xcc.types.XdmValue;
 
 public class TarantulaControllerTest extends XQueryTestCase {
 
 	private String modulePath = "/application/models/http-crawler.xqy";
 	private String moduleNamespace = "http://www.marklogic.com/tarantula/crawler";
+	
+	private String sampleURL1 = "http://en.wikipedia.org/wiki/Star_wars";
+	
+	public void testEmptyDatabase() throws Exception {
+		executeLibraryModule(modulePath, moduleNamespace, "emptyDatabase");
+		// Verify update by running a query
+		String q = "fn:count(fn:doc())";
+		ResultSequence rs = this.executeQuery(q, null, null);
+		XSInteger qResult = (XSInteger)rs.itemAt(0);
+		assertEquals(getName(), 0, qResult.asPrimitiveInt());
+	}
 	
 	public void testInit() throws Exception {
 		executeLibraryModule(modulePath, moduleNamespace, "init");
@@ -39,16 +52,16 @@ public class TarantulaControllerTest extends XQueryTestCase {
 	
 	}
 	
-	public void testEmptyQueue() throws Exception {
-		executeLibraryModule(modulePath, moduleNamespace, "emptyQueue");
+	public void testStartCrawler() throws Exception {
+		XdmValue[] params = new XdmValue[] { 
+				ValueFactory.newXSString(sampleURL1) };
+		ResultSequence rs = executeLibraryModule(modulePath, moduleNamespace, "crawl", params);
 		// Verify update by running a query
-		String q = "fn:count(fn:doc('/config/queue.xml')//link)";
-		ResultSequence rs = this.executeQuery(q, null, null);
-		XSInteger qResult = (XSInteger)rs.itemAt(0);
-		assertEquals(getName(), 0, qResult.asPrimitiveInt());
+		//System.out.println(rs.asString());
+		
+		assertEquals(getName(), 0, 0);
 	
 	}
-	
 	
 	
 }
