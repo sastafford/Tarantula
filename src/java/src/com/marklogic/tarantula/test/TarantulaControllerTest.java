@@ -57,7 +57,7 @@ public class TarantulaControllerTest extends XQueryTestCase {
 				ValueFactory.newXSString(sampleURL1) };
 		ResultSequence rs = executeLibraryModule(modulePath, moduleNamespace, "crawl", params);
 		// Verify update by running a query
-		//System.out.println(rs.asString());
+		System.out.println(rs.asString());
 		
 		assertEquals(getName(), 0, 0);
 	

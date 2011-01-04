@@ -1,11 +1,8 @@
 xquery version "1.0-ml";
 
-declare namespace html = "http://www.w3.org/1999/xhtml";
 declare namespace res = "xdmp:http";
 declare namespace eval = "xdmp:eval";
 declare namespace tara = "http://www.marklogic.com/tarantula";
-
-import module namespace url = "http://www.marklogic.com/tarantula/util" at "/util/url.xqy";
 
 declare option xdmp:update "true";
 
@@ -16,9 +13,10 @@ declare variable $switch as xs:boolean :=
     fn:true()
   else
     fn:false();
-    
+
 (: The switch variable turns the crawler on/off.  Read in from config file :)
 if ($switch) then
+    
     let $response := xdmp:http-get($url)
     let $headers := $response[1]
     return 
@@ -31,12 +29,20 @@ if ($switch) then
                     let $tidyResponse := xdmp:tidy($response[2])[2]
                     let $insert := xdmp:document-insert($url, $tidyResponse)
                     (: Store headers into the properties file :)
-                    let $b := xdmp:document-set-properties($url, $response[1])
-                    return xdmp:log(fn:concat("INSERT: ", $url), "info")
-                    (: Else the content type is not recognized :)    
-                else 
+                    let $props := xdmp:document-set-properties($url, $response[1])
+                    let $log := xdmp:log(fn:concat("INSERT: ", $url), "info")
+                    return xdmp:invoke("/util/link-queue.xqy", 
+                                              (xs:QName("url"), $url),
+                                              <options xmlns="xdmp:eval">
+                                                <isolation>different-transaction</isolation>
+                                                <prevent-deadlocks>false</prevent-deadlocks>
+                                              </options>)
+                 (: Else the content type is not recognized :)    
+                 else 
                     xdmp:log(fn:concat("CONTENT TYPE NOT RECOGNIZED: ", $content-type, ", ", $url), "notice")
         else
             xdmp:log(fn:concat("HTTP-GET FAIL: ", $url), "notice")
- else (:Tarantula crawler turned off :)
+
+else (:Tarantula crawler turned off :)
     xdmp:log(fn:concat("SWITCH OFF: "), "info")
+    

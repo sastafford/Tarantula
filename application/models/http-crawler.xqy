@@ -44,36 +44,13 @@ declare function emptyDatabase()
     return xdmp:document-delete(fn:document-uri($d)) 
 };
 
-declare function link-queue($url)
-as element()
-{
-    <queue xmlns="http://www.marklogic.com/tarantula">
-    {
-        for $a in fn:doc($url)//html:a
-        let $href := fn:string($a/@href)
-        return 
-            if ($href ne "") then
-            (: Don't include relative links with '#' :)
-                if (fn:not(fn:contains($href, "#"))) then
-                (: If it is not already in the database then add :)
-                    if (fn:not(fn:doc-available($href))) then
-                        <link xmlns="http://www.marklogic.com/tarantula">{url:rel-to-abs($url, $href)}</link>
-                    else ()
-                else ()
-            else ()
-    }
-    </queue>
-
-};
-
 declare function crawl($url as xs:string)
 {
-    let $a := xdmp:invoke("/util/tarantula.xqy", (xs:QName("url"), $url))
-    return 
-        (: Insert the document into the database :)
-        if (fn:doc-available($url)) then
-            for $link in link-queue($url)
-            return crawl($link/tara:link/text())
-        else 
-            xdmp:log(fn:concat("CRAWL URL NOT AVAILABLE: ", $url), "debug")
+    let $linkQ := xdmp:invoke("/util/tarantula.xqy", (xs:QName("url"), $url),
+                        <options xmlns="xdmp:eval">
+                            <isolation>different-transaction</isolation>
+                            <prevent-deadlocks>false</prevent-deadlocks>
+                        </options>)
+    for $q in $linkQ
+    return crawl($q/tara:link/text())     
 };
