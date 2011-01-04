@@ -22,6 +22,8 @@ declare variable $data as map:map external;
             <td>MarkLogic:</td><td>{ map:get($data, 'vers') }</td>
         </tr>
     </table>
-    <p><a href="{ xqmvc:link('user', 'list') }">User Manager example &raquo;</a></p>
-    <p><a href="{ xqmvc:plugin-link('langedit', 'editor', 'index') }">LangEdit i18n editor &raquo;</a></p>
+
+    
+    <p><a href="{ xqmvc:link('user', 'list') }">User Manager example </a></p>
+    <p><a href="{ xqmvc:plugin-link('langedit', 'editor', 'index') }">LangEdit i18n editor </a></p>
 </div>

@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-module namespace crawl = "http://www.marklogic.com/tarantula/crawler";
+module namespace crawl = "http://www.marklogic.com/tarantula/crawl";
 
 import module namespace url = "http://www.marklogic.com/tarantula/util" at "/util/url.xqy";
 
@@ -29,12 +29,6 @@ declare function turnOff()
     (xdmp:log("Tarantula Off", "info"), 
     xdmp:node-replace(fn:doc("/config/tarantula.xml")//tara:switch, 
                    <switch xmlns="http://www.marklogic.com/tarantula">off</switch>))
-};
-
-declare function emptyQueue()
-{
-    (xdmp:log("Empty Queue", "info"), 
-    xdmp:document-insert("/config/queue.xml", <queue xmlns="http://www.marklogic.com/tarantula" />))
 };
 
 declare function emptyDatabase()

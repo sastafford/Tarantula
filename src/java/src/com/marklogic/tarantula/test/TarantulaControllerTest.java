@@ -8,10 +8,11 @@ import com.marklogic.xcc.types.XdmValue;
 
 public class TarantulaControllerTest extends XQueryTestCase {
 
-	private String modulePath = "/application/models/http-crawler.xqy";
-	private String moduleNamespace = "http://www.marklogic.com/tarantula/crawler";
+	private String modulePath = "/application/models/crawl-model.xqy";
+	private String moduleNamespace = "http://www.marklogic.com/tarantula/crawl";
 	
-	private String sampleURL1 = "http://en.wikipedia.org/wiki/Star_wars";
+	private String sampleURL2 = "http://en.wikipedia.org/wiki/Star_wars";
+	private String sampleURL1 = "http://en.wikipedia.org/wiki/User:Tkgd2007";
 	
 	public void testEmptyDatabase() throws Exception {
 		executeLibraryModule(modulePath, moduleNamespace, "emptyDatabase");
