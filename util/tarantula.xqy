@@ -7,6 +7,7 @@ declare namespace tara = "http://www.marklogic.com/tarantula";
 declare option xdmp:update "true";
 
 declare variable $url as xs:string external;
+declare variable $counter as xs:string external;
 
 declare variable $switch as xs:boolean := 
   if (fn:doc("/config/tarantula.xml")//tara:switch/text() eq "on") then
@@ -31,12 +32,7 @@ if ($switch) then
                     (: Store headers into the properties file :)
                     let $props := xdmp:document-set-properties($url, $response[1])
                     let $log := xdmp:log(fn:concat("INSERT: ", $url), "info")
-                    return xdmp:invoke("/util/link-queue.xqy", 
-                                              (xs:QName("url"), $url),
-                                              <options xmlns="xdmp:eval">
-                                                <isolation>different-transaction</isolation>
-                                                <prevent-deadlocks>false</prevent-deadlocks>
-                                              </options>)
+                    return fn:true()
                  (: Else the content type is not recognized :)    
                  else 
                     xdmp:log(fn:concat("CONTENT TYPE NOT RECOGNIZED: ", $content-type, ", ", $url), "notice")

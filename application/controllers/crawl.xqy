@@ -21,19 +21,31 @@ import module namespace xqmvc = "http://scholarsportal.info/xqmvc/core" at "../.
 
 import module namespace crawl = "http://www.marklogic.com/tarantula/crawl" at "../models/crawl-model.xqy";
 
-declare function crawl($url as xs:string)
+declare function index()
+as item()*
 {
-    crawl:crawl($url)
+    xqmvc:template('master-template', (
+        'browsertitle', 'Tarantula',
+        'body', xqmvc:view('crawl-view')
+    ))
 };
 
-declare function stop()
+declare function crawl()
 {
-    (crawl:turnOff(),
-    xqmvc:template('master-template', ('body', xqmvc:view('seed-view'))))
-};
-
-declare function start()
-{
-    (crawl:turnOn(),
-    xqmvc:template('master-template', ('body', xqmvc:view('seed-view')))) 
+    
+    if (xdmp:get-request-field("stop")) then
+        crawl:turnOff()
+    else if (xdmp:get-request-field("crawl")) then
+        crawl:turnOn()
+    else if (xdmp:get-request-field("empty")) then
+        crawl:emptyDatabase()
+    else if (xdmp:get-request-field("init")) then
+        crawl:init()
+    else (),
+    let $url := xdmp:get-request-field("url")
+    return 
+        if ($url ne "") then
+            crawl:crawl($url, 1)
+        else (), 
+    xqmvc:template('master-template', ('body', xqmvc:view('crawl-view')))
 };

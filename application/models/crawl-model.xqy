@@ -6,13 +6,15 @@ import module namespace url = "http://www.marklogic.com/tarantula/util" at "/uti
 
 declare namespace html = "http://www.w3.org/1999/xhtml";
 
+declare variable $MAX := 4;
+
 declare function init()
 as empty-sequence()
 {
-    (xdmp:document-insert("/config/tarantula.xml",
-    <tarantula xmlns="http://www.marklogic.com/tarantula">
-        <switch>on</switch>
-    </tarantula>), emptyQueue())
+    xdmp:document-insert("/config/tarantula.xml",
+        <tarantula xmlns="http://www.marklogic.com/tarantula">
+            <switch>on</switch>
+        </tarantula>)
 
 };
 
@@ -38,13 +40,24 @@ declare function emptyDatabase()
     return xdmp:document-delete(fn:document-uri($d)) 
 };
 
-declare function crawl($url as xs:string)
+declare function crawl($url as xs:string, $counter as xs:integer)
 {
-    let $linkQ := xdmp:invoke("/util/tarantula.xqy", (xs:QName("url"), $url),
+    if ($counter lt $MAX) then
+        (: If the URL is successfully inserted into the database :)
+        if (xdmp:invoke("/util/tarantula.xqy", (xs:QName("url"), $url),
                         <options xmlns="xdmp:eval">
                             <isolation>different-transaction</isolation>
                             <prevent-deadlocks>false</prevent-deadlocks>
-                        </options>)
-    for $q in $linkQ
-    return crawl($q/tara:link/text())     
+                        </options>)) then
+            (: Get the links in the page :)
+            let $linkQ := xdmp:invoke("/util/link-queue.xqy", (xs:QName("url"), $url),
+                                        <options xmlns="xdmp:eval">
+                                            <isolation>different-transaction</isolation>
+                                            <prevent-deadlocks>false</prevent-deadlocks>
+                                        </options>)
+            for $q in $linkQ
+            return crawl($q/tara:link/text(), $counter+1)
+        else ()
+    else
+        xdmp:log("CRAWL MAXIMUM REACHED", "notice")   
 };

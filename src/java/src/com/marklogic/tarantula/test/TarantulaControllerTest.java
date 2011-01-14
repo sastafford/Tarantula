@@ -55,7 +55,8 @@ public class TarantulaControllerTest extends XQueryTestCase {
 	
 	public void testStartCrawler() throws Exception {
 		XdmValue[] params = new XdmValue[] { 
-				ValueFactory.newXSString(sampleURL1) };
+				ValueFactory.newXSString(sampleURL2),
+				ValueFactory.newXSInteger(1) };
 		ResultSequence rs = executeLibraryModule(modulePath, moduleNamespace, "crawl", params);
 		// Verify update by running a query
 		System.out.println(rs.asString());

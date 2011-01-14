@@ -54,7 +54,7 @@ declare variable $url-suffix as xs:string := '.html';
 (:
  : Default controller to load, if none specified.
  :)
-declare variable $default-controller as xs:string := 'welcome';
+declare variable $default-controller as xs:string := 'crawl';
 
 (:
  : Field name to use in the querystring when specifying which Controller to 
