@@ -5,6 +5,8 @@ import com.marklogic.xcc.ValueFactory;
 import com.marklogic.xcc.types.*;
 import com.marklogic.xcc.ResultSequence;
 
+import java.io.*;
+
 public class HTTPCrawlerTest extends XQueryTestCase {
 
 	private String modulePath = "/util/tarantula.xqy";
@@ -37,14 +39,26 @@ public class HTTPCrawlerTest extends XQueryTestCase {
 	public void testGetLinkQueue() throws Exception {
 		//Initialize the variable
 		XdmVariable[] variables = new XdmVariable[] { 
-				ValueFactory.newVariable(new XName("url"), ValueFactory.newXSString(sampleURL3))};
+				ValueFactory.newVariable(new XName("url"), ValueFactory.newXSString(sampleURL1))};
 		ResultSequence rs = this.executeMainModule(modulePath2, null, variables);
-		String q = "fn:doc('" + sampleURL3 + "')";
+		String q = "fn:count(fn:doc('" + sampleURL1 + "')//*:link)";
 		ResultSequence rs2 = executeQuery(q, null, null);
 		String qStr = rs2.asString();
+		try {
+		    // Create file 
+		    FileWriter fstream = new FileWriter("link-queue.txt");
+		    BufferedWriter out = new BufferedWriter(fstream);
+		    out.write(rs.asString());
+		    //Close the output stream
+		    out.close();
+		}
+		catch (Exception e) { //Catch exception if any
+		      System.err.println("Error: " + e.getMessage());
+		
+		}
 		System.out.println(rs.asString());
 		//System.out.println(qStr);
-		assertEquals("Star Wars - Wikipedia, the free encyclopedia", qStr);		
+		assertTrue(Integer.parseInt(qStr) > 0);	
 	}
 	
 		

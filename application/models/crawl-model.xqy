@@ -6,7 +6,7 @@ import module namespace url = "http://www.marklogic.com/tarantula/util" at "/uti
 
 declare namespace html = "http://www.w3.org/1999/xhtml";
 
-declare variable $MAX := 4;
+declare variable $MAX := 12;
 
 declare function init()
 as empty-sequence()
@@ -42,22 +42,20 @@ declare function emptyDatabase()
 
 declare function crawl($url as xs:string, $counter as xs:integer)
 {
-    if ($counter lt $MAX) then
-        (: If the URL is successfully inserted into the database :)
-        if (xdmp:invoke("/util/tarantula.xqy", (xs:QName("url"), $url),
-                        <options xmlns="xdmp:eval">
-                            <isolation>different-transaction</isolation>
-                            <prevent-deadlocks>false</prevent-deadlocks>
-                        </options>)) then
-            (: Get the links in the page :)
-            let $linkQ := xdmp:invoke("/util/link-queue.xqy", (xs:QName("url"), $url),
-                                        <options xmlns="xdmp:eval">
-                                            <isolation>different-transaction</isolation>
-                                            <prevent-deadlocks>false</prevent-deadlocks>
-                                        </options>)
-            for $q in $linkQ
-            return crawl($q/tara:link/text(), $counter+1)
-        else ()
-    else
-        xdmp:log("CRAWL MAXIMUM REACHED", "notice")   
+    (: If the URL is successfully inserted into the database :)
+    if (xdmp:invoke("/util/tarantula.xqy", (xs:QName("url"), $url),
+                    <options xmlns="xdmp:eval">
+                        <isolation>different-transaction</isolation>
+                        <prevent-deadlocks>false</prevent-deadlocks>
+                    </options>)) then
+        (: Get the links in the page :)
+        let $linkQ := xdmp:invoke("/util/link-queue.xqy", (xs:QName("url"), $url),
+                                    <options xmlns="xdmp:eval">
+                                        <isolation>different-transaction</isolation>
+                                        <prevent-deadlocks>false</prevent-deadlocks>
+                                    </options>)
+        for $q in $linkQ
+        return crawl($q/tara:link/tara:absolute/text(), $counter+1)
+    else ()
+    
 };

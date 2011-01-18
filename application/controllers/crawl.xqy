@@ -32,7 +32,6 @@ as item()*
 
 declare function crawl()
 {
-    
     if (xdmp:get-request-field("stop")) then
         crawl:turnOff()
     else if (xdmp:get-request-field("crawl")) then
@@ -43,9 +42,6 @@ declare function crawl()
         crawl:init()
     else (),
     let $url := xdmp:get-request-field("url")
-    return 
-        if ($url ne "") then
-            crawl:crawl($url, 1)
-        else (), 
+    return crawl:crawl($url, 1), 
     xqmvc:template('master-template', ('body', xqmvc:view('crawl-view')))
 };
