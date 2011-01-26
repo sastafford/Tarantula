@@ -2,7 +2,7 @@ xquery version "1.0-ml";
 
 declare namespace html = "http://www.w3.org/1999/xhtml";
 
-import module namespace url = "http://www.marklogic.com/tarantula/util" at "/util/url.xqy";
+import module namespace url = "http://www.marklogic.com/tarantula/util" at "url.xqy";
 
 declare variable $url as xs:string external;
 
