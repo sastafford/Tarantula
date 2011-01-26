@@ -35,13 +35,10 @@ declare function crawl()
     if (xdmp:get-request-field("stop")) then
         crawl:turnOff()
     else if (xdmp:get-request-field("crawl")) then
-        crawl:turnOn()
+        (crawl:turnOn(), 
+         crawl:visit(xdmp:get-request-field("url")))
     else if (xdmp:get-request-field("empty")) then
         crawl:emptyDatabase()
-    else if (xdmp:get-request-field("init")) then
-        crawl:init()
-    else (),
-    let $url := xdmp:get-request-field("url")
-    return crawl:crawl($url, 1), 
-    xqmvc:template('master-template', ('body', xqmvc:view('crawl-view')))
+    else ()
+    (: xqmvc:template('master-template', ('body', xqmvc:view('crawl-view'))) :)
 };

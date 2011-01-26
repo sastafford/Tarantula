@@ -11,8 +11,8 @@ public class TarantulaControllerTest extends XQueryTestCase {
 	private String modulePath = "/application/models/crawl-model.xqy";
 	private String moduleNamespace = "http://www.marklogic.com/tarantula/crawl";
 	
-	private String sampleURL2 = "http://en.wikipedia.org/wiki/Star_wars";
-	private String sampleURL1 = "http://en.wikipedia.org/wiki/User:Tkgd2007";
+	private String sampleURL1 = "http://en.wikipedia.org/wiki/Star_wars";
+
 	
 	public void testEmptyDatabase() throws Exception {
 		executeLibraryModule(modulePath, moduleNamespace, "emptyDatabase");
@@ -53,17 +53,28 @@ public class TarantulaControllerTest extends XQueryTestCase {
 	
 	}
 	
-	public void testStartCrawler() throws Exception {
+//	public void testStartDepthCrawler() throws Exception {
+//		XdmValue[] params = new XdmValue[] { 
+//				ValueFactory.newXSString(sampleURL1),
+//				ValueFactory.newXSInteger(1) };
+//		ResultSequence rs = executeLibraryModule(modulePath, moduleNamespace, "crawl", params);
+//		// Verify update by running a query
+//		System.out.println(rs.asString());
+//		
+//		assertEquals(getName(), 0, 0);
+//	
+//	}
+	
+	public void testStartBreadthCrawler() throws Exception {
 		XdmValue[] params = new XdmValue[] { 
-				ValueFactory.newXSString(sampleURL2),
-				ValueFactory.newXSInteger(1) };
-		ResultSequence rs = executeLibraryModule(modulePath, moduleNamespace, "crawl", params);
-		// Verify update by running a query
+			ValueFactory.newXSString(sampleURL1),
+			ValueFactory.newXSInteger(1) };
+		ResultSequence rs = executeLibraryModule(modulePath, moduleNamespace, "x", null);
+		//Verify update by running a query
 		System.out.println(rs.asString());
-		
+	
 		assertEquals(getName(), 0, 0);
-	
+
 	}
-	
 	
 }

@@ -3,11 +3,14 @@ import module namespace xqmvc = "http://scholarsportal.info/xqmvc/core" at "../.
 declare variable $data as map:map external;
 
 <div id="crawldiv">
-    <form action="{ xqmvc:link('crawl', 'crawl') }" method="post">
+    <form action="{ xqmvc:link('crawl-controller', 'crawl') }" method="post">
         URL SEED: <input type="text" name="url" id="url" value="{xdmp:get-request-field("url")}" size="55"/>
         <input type="submit" name="crawl" value="CRAWL" />
         <input type="submit" name="stop" value="STOP" />
         <input type="submit" name="empty" value="EMPTY" />
-        <input type="submit" name="init" value="INIT" />
+        <br/>
+        <input type="radio" name="cardinality" value="one" />One
+        <br />
+        <input type="radio" name="cardinality" value="many" />Many
     </form>
 </div>   

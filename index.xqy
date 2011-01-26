@@ -1,34 +1,36 @@
 xquery version "1.0-ml";
 
-(:
- : Copyright 2009 Ontario Council of University Libraries
- : 
- : Licensed under the Apache License, Version 2.0 (the "License");
- : you may not use this file except in compliance with the License.
- : You may obtain a copy of the License at
- : 
- :    http://www.apache.org/licenses/LICENSE-2.0
- : 
- : Unless required by applicable law or agreed to in writing, software
- : distributed under the License is distributed on an "AS IS" BASIS,
- : WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- : See the License for the specific language governing permissions and
- : limitations under the License.
- :)
+xdmp:set-response-content-type("text/html; charset=utf-8"),
+'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">',
+<html>
+<head>
+    <title>Tarantula</title>
+</head>
 
-(:~
- : The entry-point into the framework.  Executes a function within a controller.
- :)
+<body>
+    
+<div id="hd">
+    <h2>Tarantula</h2>
+</div>
+        
+<div id="crawldiv">
+    <form action="index.xqy" method="post">
+        URL SEED: <input type="text" name="url" id="url" value="{xdmp:get-request-field("url")}" size="55"/>
+        <input type="submit" name="crawl" value="CRAWL" />
+        <input type="submit" name="stop" value="STOP" />
+        <input type="submit" name="empty" value="EMPTY" />
+        <br/>
+        <input type="radio" name="cardinality" value="one" />One
+        <br />
+        <input type="radio" name="cardinality" value="many" />Many
+    </form>
+</div> 
+        
+<div id="ft">
+    <img src="./img/logo.gif"></img>
+</div>
+</body>
 
-import module namespace xqmvc = "http://scholarsportal.info/xqmvc/core" at "system/xqmvc.xqy";
-import module namespace xqmvc-conf = "http://scholarsportal.info/xqmvc/config" at "application/config/config.xqy";
+</html>
 
-let $controller := xqmvc:current-controller()
-let $function := xqmvc:current-function()
-let $plugin := xqmvc:current-plugin()
-let $log := if ($xqmvc-conf:debug) then xqmvc:log-status() else ()
-return
-    if ($plugin) then
-        xqmvc:plugin-controller($plugin, $controller, $function)
-    else
-        xqmvc:controller($controller, $function)
+

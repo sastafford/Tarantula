@@ -40,7 +40,41 @@ declare function emptyDatabase()
     return xdmp:document-delete(fn:document-uri($d)) 
 };
 
-declare function crawl($url as xs:string, $counter as xs:integer)
+(: Visit a site, store in the db, and return it's links :)
+declare function visit($url as xs:string)
+{
+    let $x := xdmp:log("visit intro", "info")
+    return
+    (: If the URL is successfully inserted into the database :)
+    if (xdmp:invoke("/util/tarantula.xqy", (xs:QName("url"), $url),
+                    <options xmlns="xdmp:eval">
+                        <isolation>different-transaction</isolation>
+                        <prevent-deadlocks>false</prevent-deadlocks>
+                    </options>)) then
+        let $y := xdmp:log("before linkQ", "debug")
+        (: Get the links in the page :)
+        let $linkQ := xdmp:invoke("/util/link-queue.xqy", (xs:QName("url"), $url),
+                                    <options xmlns="xdmp:eval">
+                                        <isolation>different-transaction</isolation>
+                                        <prevent-deadlocks>false</prevent-deadlocks>
+                                    </options>)
+        return $linkQ
+    else ()
+};
+
+declare function breadth-crawl($levelQueue, $depth as xs:integer)
+{
+    let $nextLevelQueue :=
+        <queue>
+        {
+            for $node in $levelQueue/tara:link
+            return visit( $node/tara:absolute/text() )/tara:link
+        }
+        </queue>
+    return breadth-crawl($nextLevelQueue, $depth+1)
+};
+
+declare function depth-crawl($url as xs:string, $counter as xs:integer)
 {
     (: If the URL is successfully inserted into the database :)
     if (xdmp:invoke("/util/tarantula.xqy", (xs:QName("url"), $url),
@@ -55,7 +89,7 @@ declare function crawl($url as xs:string, $counter as xs:integer)
                                         <prevent-deadlocks>false</prevent-deadlocks>
                                     </options>)
         for $q in $linkQ
-        return crawl($q/tara:link/tara:absolute/text(), $counter+1)
+        return depth-crawl($q/tara:link/tara:absolute/text(), $counter+1)
     else ()
     
 };
