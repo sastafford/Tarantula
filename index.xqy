@@ -9,7 +9,9 @@ declare function local:controller()
             crawl:visit(xdmp:get-request-field("url"))
         else if (xdmp:get-request-field("cardinality") eq "many") then
             crawl:breadth-crawl(<queue xmlns="http://www.marklogic.com/tarantula">
-                                    <absolute>{ xdmp:get-request-field("url") }</absolute>
+                                    <link>
+                                        <absolute>{ xdmp:get-request-field("url") }</absolute>
+                                    </link>
                                 </queue>,0)  
         else ()
     else if (xdmp:get-request-field("empty")) then
@@ -19,13 +21,15 @@ declare function local:controller()
 
 xdmp:set-response-content-type("text/html; charset=utf-8"),
 '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">',
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Tarantula</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <link href="css/screen.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="js/custom.js" />
 </head>
 
 <body>
-    
 <div id="hd">
     <h2>Tarantula</h2>
 </div>
@@ -41,13 +45,14 @@ xdmp:set-response-content-type("text/html; charset=utf-8"),
         <br />
         <input type="radio" name="cardinality" value="many" />Many
     </form>
+</div>     
+
+<div id="results">
+{ local:controller() }
 </div> 
-{ local:controller() }        
 <div id="ft">
     <img src="./img/logo.gif"></img>
 </div>
 </body>
 
 </html>
-
-

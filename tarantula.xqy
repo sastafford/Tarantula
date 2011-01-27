@@ -40,12 +40,15 @@ if ($switch) then
                         return fn:true()
                      (: Else the content type is not recognized :)    
                      else 
-                        xdmp:log(fn:concat("CONTENT TYPE NOT RECOGNIZED: ", $content-type, ", ", $url), "notice")
+                        let $_ := xdmp:log(fn:concat("CONTENT TYPE NOT RECOGNIZED: ", $content-type, ", ", $url), "notice")
+                        return fn:false()
             else
-                xdmp:log(fn:concat("HTTP-GET FAIL: ", $url), "notice")
+                let $_ := xdmp:log(fn:concat("HTTP-GET FAIL: ", $url), "notice")
+                return fn:false()          
     }
     catch ($exception) { 
-        xdmp:log(fn:concat("Tarantula Exception: ", $exception))
+        let $_ := xdmp:log(xdmp:quote($exception))
+        return fn:false()       
     }
 else (:Tarantula crawler turned off :)
     xdmp:log(fn:concat("SWITCH OFF: "), "info")
