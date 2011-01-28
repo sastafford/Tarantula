@@ -26,13 +26,12 @@ xdmp:set-response-content-type("text/html; charset=utf-8"),
     <title>Tarantula</title>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
     <link href="css/screen.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="js/jquery-1.4.4.js" />
     <script type="text/javascript" src="js/custom.js" />
 </head>
 
 <body>
-<div id="hd">
-    <h2>Tarantula</h2>
-</div>
+<div id="hd">Tarantula</div>
         
 <div id="crawldiv">
     <form action="index.xqy" method="post">
@@ -41,7 +40,7 @@ xdmp:set-response-content-type("text/html; charset=utf-8"),
         <input type="submit" name="stop" value="STOP" />
         <input type="submit" name="empty" value="EMPTY" />
         <br/>
-        <input type="radio" name="cardinality" value="one" />One
+        <input type="radio" name="cardinality" value="one" checked="checked"/>One
         <br />
         <input type="radio" name="cardinality" value="many" />Many
     </form>
@@ -50,6 +49,10 @@ xdmp:set-response-content-type("text/html; charset=utf-8"),
 <div id="results">
 { local:controller() }
 </div> 
+
+<div id="count"></div>
+
+
 <div id="ft">
     <img src="./img/logo.gif"></img>
 </div>

@@ -37,7 +37,7 @@ declare function emptyDatabase()
 {
     let $_ := xdmp:log("Tarantula DB Delete", "info")
     for $d in fn:doc()
-    return xdmp:document-delete(fn:document-uri($d)),init() 
+    return xdmp:document-delete(fn:document-uri($d))
 };
 
 (: Visit a site, store in the db, and return it's links :)
@@ -63,11 +63,13 @@ declare function breadth-crawl($levelQueue, $depth as xs:integer)
 {
     let $nextLevelQueue :=
         <queue xmlns="http://www.marklogic.com/tarantula">
+            <depth>{ $depth }</depth>
         {
             for $node in $levelQueue/tara:link
             return visit( $node/tara:absolute/text() )/tara:link
         }
         </queue>
+    (: If the number of links in the queue exceeds 5000 then dump link queue to disk :)
     return breadth-crawl($nextLevelQueue, $depth+1)
 };
 
