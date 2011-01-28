@@ -19,7 +19,7 @@ declare variable $http-options as xs:string :=
     <options xmlns="xdmp:http">
         <timeout></timeout>
     </options>;
-
+    
 (: The switch variable turns the crawler on/off.  Read in from config file :)
 if ($switch) then
     try {   
@@ -33,9 +33,9 @@ if ($switch) then
                     (: If the content type is text/htm or text/html :)
                     if (fn:contains($content-type, "text/html") or fn:contains($content-type, "text/htm")) then 
                         let $tidyResponse := xdmp:tidy($response[2])[2]
-                        let $insert := xdmp:document-insert($url, $tidyResponse)
+                        let $insert := xdmp:document-insert($url, $tidyResponse, (), ("uncrawled"))
                         (: Store headers into the properties file :)
-                        let $props := xdmp:document-set-properties($url, $response[1])
+                        let $response-props := xdmp:document-set-properties($url, $response[1])
                         let $log := xdmp:log(fn:concat("INSERT: ", $url), "info")
                         return fn:true()
                      (: Else the content type is not recognized :)    

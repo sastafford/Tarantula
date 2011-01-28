@@ -2,17 +2,22 @@ xquery version "1.0-ml";
 
 import module namespace crawl = "http://www.marklogic.com/tarantula/crawl" at "crawl-model.xqy";
 
-declare function local:controller()
-{
+declare function local:load-seed() {
+    xdmp:invoke("tarantula.xqy", (xs:QName("url"), xdmp:get-request-field("url")),
+                    <options xmlns="xdmp:eval">
+                        <isolation>different-transaction</isolation>
+                        <prevent-deadlocks>false</prevent-deadlocks>
+                    </options>)
+
+};
+
+declare function local:controller() {
     if (xdmp:get-request-field("crawl")) then 
         if (xdmp:get-request-field("cardinality") eq "one") then
             crawl:visit(xdmp:get-request-field("url"))
         else if (xdmp:get-request-field("cardinality") eq "many") then
-            crawl:breadth-crawl(<queue xmlns="http://www.marklogic.com/tarantula">
-                                    <link>
-                                        <absolute>{ xdmp:get-request-field("url") }</absolute>
-                                    </link>
-                                </queue>,0)  
+            let $x := local:load-seed()
+            return xdmp:spawn("breadth-crawl.xqy", (xs:QName("depth"), 1))  
         else ()
     else if (xdmp:get-request-field("empty")) then
         crawl:emptyDatabase()
