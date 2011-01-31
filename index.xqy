@@ -2,6 +2,10 @@ xquery version "1.0-ml";
 
 import module namespace crawl = "http://www.marklogic.com/tarantula/crawl" at "crawl-model.xqy";
 
+declare namespace html = "http://www.w3.org/1999/xhtml";
+
+declare variable $q-text := xdmp:get-request-field("q");
+
 declare function local:load-seed() {
     xdmp:invoke("tarantula.xqy", (xs:QName("url"), xdmp:get-request-field("url")),
                     <options xmlns="xdmp:eval">
@@ -21,7 +25,17 @@ declare function local:controller() {
         else ()
     else if (xdmp:get-request-field("empty")) then
         crawl:emptyDatabase()
+    else if (xdmp:get-request-field("q")) then
+        local:search-results()
     else ()
+};
+
+declare function local:search-results()
+{
+    for $i in cts:search(fn:doc(), cts:element-word-query(xs:QName("html:title"), $q-text))
+    return 
+        <p>{ $i//html:title/text() } </p>
+    
 };
 
 xdmp:set-response-content-type("text/html; charset=utf-8"),
@@ -51,11 +65,19 @@ xdmp:set-response-content-type("text/html; charset=utf-8"),
     </form>
 </div>     
 
+<div id="search">
+    <form action="index.xqy" method="post">
+        SEARCH: <input type="text" name="q" />
+        <input type="submit" name="q" value="QUERY" />
+    </form>
+</div>
+
 <div id="results">
 { local:controller() }
+{ local:search-results() }
 </div> 
 
-<div id="count"></div>
+<div id="status"></div>
 
 
 <div id="ft">
