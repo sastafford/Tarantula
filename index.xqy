@@ -32,10 +32,15 @@ declare function local:controller() {
 
 declare function local:search-results()
 {
-    for $i in cts:search(fn:doc(), cts:element-word-query(xs:QName("html:title"), $q-text))
-    return 
-        <p>{ $i//html:title/text() } </p>
-    
+    if (xdmp:get-request-field("constraint") eq "title") then
+        for $i in cts:search(/html:html, cts:element-word-query(xs:QName("html:title"), $q-text))
+        return 
+            <p><a href="{ base-uri($i) }">{ $i//html:title/text() }</a></p>
+    else if (xdmp:get-request-field("constraint") eq "none") then
+        for $i in cts:search(/html:html, cts:word-query($q-text))
+        return
+            <p><a href="{ base-uri($i) }">{ $i//html:title/text() }</a></p>
+    else ()
 };
 
 xdmp:set-response-content-type("text/html; charset=utf-8"),
@@ -54,30 +59,37 @@ xdmp:set-response-content-type("text/html; charset=utf-8"),
         
 <div id="crawldiv">
     <form action="index.xqy" method="post">
-        URL SEED: <input type="text" name="url" id="url" value="{xdmp:get-request-field("url")}" size="55"/>
+        URL SEED: <input type="text" name="url" id="url" value="{ xdmp:get-request-field("url") }" size="55"/>
         <input type="submit" name="crawl" value="CRAWL" />
         <input type="submit" name="stop" value="STOP" />
         <input type="submit" name="empty" value="EMPTY" />
         <br/>
-        <input type="radio" name="cardinality" value="one" checked="checked"/>One
+        <input type="radio" name="cardinality" value="one" checked="checked">One</input>
         <br />
-        <input type="radio" name="cardinality" value="many" />Many
+        <input type="radio" name="cardinality" value="many">Many</input>
     </form>
 </div>     
 
 <div id="search">
-    <form action="index.xqy" method="post">
-        SEARCH: <input type="text" name="q" />
-        <input type="submit" name="q" value="QUERY" />
+    <form action="index.xqy" method="get">
+        SEARCH: <input type="text" name="q" value="{ xdmp:get-request-field("q") }"/>
+        <input type="submit" name="q-submit" value="QUERY" />
+        <br/>
+        <input type="radio" name="constraint" value="title" checked="checked">Title</input>
+        <br />
+        <input type="radio" name="constraint" value="none">None</input>
     </form>
 </div>
 
 <div id="results">
 { local:controller() }
-{ local:search-results() }
 </div> 
 
-<div id="status"></div>
+<div id="status">
+<a id="status-update" href="#">Status</a>
+<br />
+<span id="status-results">Default</span>
+</div>
 
 
 <div id="ft">

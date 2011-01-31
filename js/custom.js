@@ -1,7 +1,8 @@
 $(document).ready(function(){
-	//var refreshId = setInterval(function() {
-		//$("div#count").load("count.xqy");
-		//}, 3000);
+
+	$("a#status-update").click(function(event){
+		$("span#status-results").load("status.xqy");
+	  });
     });
 
 

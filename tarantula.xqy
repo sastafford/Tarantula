@@ -3,6 +3,7 @@ xquery version "1.0-ml";
 declare namespace res = "xdmp:http";
 declare namespace eval = "xdmp:eval";
 declare namespace tara = "http://www.marklogic.com/tarantula";
+declare namespace error = "http://marklogic.com/xdmp/error";
 
 declare option xdmp:update "true";
 
@@ -48,6 +49,7 @@ if ($switch) then
     }
     catch ($exception) { 
         let $_ := xdmp:log(xdmp:quote($exception))
+        let $b := xdmp:document-insert(fn:concat(xdmp:hash64(fn:string($exception)), ".xml"), $exception, (), "error")
         return fn:false()       
     }
 else (:Tarantula crawler turned off :)
